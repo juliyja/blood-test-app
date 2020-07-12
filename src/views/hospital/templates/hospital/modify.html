@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block jumbotron %}
+    <div class="container">
+        <div class="row">
+            <a href="{{ url_for(".viewer") }}" class="d-none d-sm-inline-block">
+                <i class="fas fa-chevron-circle-left btn-back"></i>
+            </a>
+            <div class="col px-0">
+                <h1 class="mb-auto pb-3 ">{% if row_id %}Edit {% else %}Add {% endif %}<span class="gray">Details</span>
+                </h1>
+            </div>
+        </div>
+        <form class="p-5" action="{{ url_for('.modify', row_id=row_id) }}" method="POST">
+            <div class="row">
+                <div class="col col-md-9">
+                    <section class="pb-2 pt-4">
+                        <h4 class="pb-3">Hospital <span class="gray">Info</span></h4>
+                        <div class="form-row">
+                            <div class="form-group col-7">
+                                <label>Name*</label>
+                                <input type="text" value="{{ hospital.get('name', '') }}" placeholder="Hospital name"
+                                       class="form-control"
+                                       name="institution_name" required/>
+                            </div>
+                            <div class="form-group col-7">
+                                <label>Hospital Number*</label>
+                                <input type="text" class="form-control"
+                                       value="{{ hospital.get('hospital_number', '') }}"
+                                       placeholder="AA00000" name="hospital_number" required/>
+                            </div>
+                            <div class="form-group col-7">
+                                <label>Telephone Number*</label>
+                                <input type="text" class="form-control" value="{{ hospital.get('phone', '') }}"
+                                       placeholder="020 7987 1112"
+                                       name="phone" required pattern="^(\(?\+?[0-9]*\)?)?[0-9_\- \(\)]*$"/>
+                            </div>
+                            <div class="form-group col-7">
+                                <label>Location</label>
+                                <input type="text" class="form-control" value="{{ hospital.get('location', '') }}"
+                                       placeholder="195/195a E India Dock Rd, Poplar, London"
+                                       name="location"/>
+                            </div>
+                            <div class="form-group col-7">
+                                <label>Postcode*</label>
+                                <input type="text" class="form-control" value="{{ hospital.get('postcode', '') }}"
+                                       placeholder="E14 0EA"
+                                       name="postcode" required
+                                       pattern="^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]?[ \-]?[0-9][A-Za-z]{2}|[Gg][Ii][Rr][ -]?0[Aa]{2})$"/>
+
+                            </div>
+                            <div class="form-group col-7">
+                                <label>Email*</label>
+                                <input type="text" class="form-control" value="{{ hospital.get('email', '') }}"
+                                       placeholder=" place@holder.co.uk" name="email" required
+                                       pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"/>
+                            </div>
+
+                        </div>
+
+                    </section>
+                </div>
+            </div>
+            <div class="row">
+                <button type="submit" class="btn btn-primary mr-auto ml-3 mt-5 mb-2">Save Changes</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

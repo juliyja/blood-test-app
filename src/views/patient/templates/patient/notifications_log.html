@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block jumbotron %}
+    <div class="container">
+        <div class="row">
+            <a href="{{ url_for(".get_blood_tests", row_id=patient.get('_id')) }}" class="d-none d-sm-inline-block">
+                <i class="fas fa-chevron-circle-left btn-back"></i>
+            </a>
+            <div class="col col-md-7 col-sm-7 col-8 px-0">
+                <h1 class="mb-auto pb-3" style="display: inline">Blood Test Notifications Log</h1>
+                <h4 class="mt-3"><span
+                        class="gray">Patient:</span> {{ patient.get('first_name') }} {{ patient.get('last_name') }}
+                </h4>
+            </div>
+            <div class="row mt-5 w-100">
+                <div class="col">
+                    <div class="card mb-3 gray">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Due date</h6>
+                            <h5><span class="badge badge-primary">{{ blood_test['due_date'] | date_to_string }}</span>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card mb-3 gray">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Completed date</h6>
+                            {% if (blood_test.get('done_date')) %}
+                                <h5><span
+                                        class="badge badge-primary">{{ blood_test.get('done_date') | date_to_string }}</span>
+                                </h5>
+                            {% else %}
+                                <h5><span class="badge badge-danger">Missing</span></h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card mb-3 gray">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Results received date</h6>
+                            {% if (blood_test.get('results_received_date')) %}
+                                <h5><span
+                                        class="badge badge-primary">{{ blood_test.get('results_received_date') | date_to_string }}</span>
+                                </h5>
+                            {% else %}
+                                <h5><span class="badge badge-danger">Missing</span></h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mt-5">
+            <section class="pb-2 w-100">
+                <h4 class="pb-2"><b>Sent to patient</b></h4>
+                <div class="row">
+                    {% if (patient_log_sms | length == 0 and patient_log_email | length == 0) %}
+                        <div class="col-xl-6 col-12">
+                            <h3>–</h3>
+                        </div>
+                    {% else %}
+                        {% if (patient_log_sms | length > 0) %}
+                            <div class="col-xl-6 col-12 mt-3">
+                                <ul class="list-unstyled reminders pl-4">
+                                    {% for p in patient_log_sms %}
+                                        <li class="row">sent on &nbsp;<b>{{ p.get('timestamp') | date_to_string }}</b>&nbsp;
+                                            at&nbsp;<b>{{ p.get('timestamp') | time_to_string }}</b>&nbsp;
+                                            to&nbsp;<b>{{ patient['phone_number'] }}</b>&nbsp;by sms
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        {% if (patient_log_email | length > 0) %}
+                            <div class="col-xl-6 col-12 mt-3">
+                                <ul class="list-unstyled reminders pl-4">
+
+                                    {% for p in patient_log_email %}
+                                        <li class="row">sent on&nbsp;<b>{{ p.get('timestamp') | date_to_string }}</b>&nbsp;
+                                            at&nbsp;<b>{{ p.get('timestamp') | time_to_string }}</b>&nbsp;
+                                            to&nbsp;<b>{{ patient['email'] }}</b>&nbsp; by email
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+
+        <div class="row mt-5">
+            <section class="pb-2 w-100">
+                <h4 class="pb-2"><b>Sent to hospital</b></h4>
+                <div class="row">
+                    {% if (hospital_log_email | length > 0) %}
+                        <div class="col-md-6 col-12 mt-3">
+                            <ul class="list-unstyled reminders pl-4">
+                                {% for h in hospital_log_email %}
+                                    <li class="row">sent on&nbsp;<b>{{ h.get('timestamp') | date_to_string }}</b>&nbsp;
+                                        at&nbsp;<b>{{ h.get('timestamp') | time_to_string }}</b>&nbsp;
+                                        to&nbsp;<b>{{ hospital['email'] }}</b>&nbsp; by email
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="col-lg-6 col-12 mt-3">
+                            <h3>–</h3>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,6 @@
+pytest
+pytest-tap
+pytest-cov
+mongomock
+codecov
+git+https://github.com/mongomock/mongomock.git@develop

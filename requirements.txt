@@ -1,0 +1,10 @@
+flask
+flask_pymongo
+flask_login
+bcrypt
+gunicorn
+pytest
+html2text
+twilio
+celery
+pendulum

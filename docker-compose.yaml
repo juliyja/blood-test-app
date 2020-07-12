@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  web:
+    build:
+      context: .
+      target: dev-stage
+    ports:
+      - 8080:8080
+    volumes:
+      - ./src:/app
+      - ./tests:/tests
+    environment:
+      - FLASK_ENV=development
+      - SECRET_KEY=ELO
+      - MONGODB_URI=mongodb://mongodb/iconic
+    restart: on-failure
+  mongodb:
+    image: mongo:4.0
+    ports:
+      - 27017:27017
+    volumes:
+      - db-data:/data/db
+volumes:
+  db-data:

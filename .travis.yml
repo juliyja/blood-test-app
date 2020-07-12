@@ -1,0 +1,13 @@
+language: bash
+
+branches:
+  only:
+  - master
+  - develop
+
+services:
+- docker
+
+script:
+- docker build --pull . -t iconic-tests:$TRAVIS_BUILD_ID --target test-stage
+- docker run --rm iconic-tests:$TRAVIS_BUILD_ID

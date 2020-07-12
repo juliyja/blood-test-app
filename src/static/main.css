@@ -1,0 +1,404 @@
+body, html {
+    background-color: rgb(241, 241, 241);
+    font-family: 'IBM Plex Sans', sans-serif;
+    height: 100%;
+}
+
+@media screen and (max-width: 576px) {
+    .p-8 {
+        padding: 4.5rem 2.5rem;
+    }
+}
+
+@media screen and (min-width: 576px) {
+    .jumbotron {
+        width: 85%;
+    }
+
+    .container.dashboard {
+        width: 85%;
+    }
+
+    .alert {
+        width: 85%;
+    }
+
+    .p-8 {
+        padding: 4.5rem;
+    }
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+.container.dashboard {
+    max-width: none;
+}
+
+.jumbotron {
+    min-height: 70vh;
+}
+
+.card {
+    border: none;
+}
+
+.card.gray {
+    color: inherit;
+    background-color: rgb(241, 241, 241);
+}
+
+h10.subtitle {
+    opacity: 0.5;
+}
+
+.gray {
+    color: rgba(0, 0, 0, 0.24);
+}
+
+.dark-gray {
+    color: #6d757d;
+}
+
+.progress {
+    height: 4px;
+    background-color: #eaeef3;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.nav-tabs {
+    font-size: 1.2rem;
+}
+
+/* Spacing */
+
+.p-6 {
+    padding: 3.5rem;
+}
+
+.p-8 {
+    padding: 4.5rem;
+}
+
+/* Buttons */
+
+button {
+    -webkit-appearance: none;
+}
+
+.btn {
+    border-radius: 5px;
+}
+
+.btn-back {
+    position: fixed;
+    margin-left: -2.5rem;
+    margin-top: 0.3rem;
+    font-size: 25px;
+    color: rgb(87, 137, 252);
+}
+
+.btn-primary {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    background-color: rgb(87, 137, 252);
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: rgb(61, 109, 232);
+    border: none;
+}
+
+.btn-primary:focus {
+    box-shadow: none;
+}
+
+.btn-outline-primary {
+    color: rgb(87, 137, 252);
+    border-color: rgb(87, 137, 252);
+}
+
+.btn-outline-primary:hover {
+    background-color: rgb(87, 137, 252);
+    border-color: rgb(87, 137, 252);
+}
+
+.btn-outline-primary:focus {
+    box-shadow: none;
+}
+
+.btn-secondary {
+    color: #6d757d;
+    background-color: #f1f1f1;
+    border-color: #f1f1f1;
+}
+
+.btn-secondary:focus {
+    outline: none;
+}
+
+.btn-outline-danger {
+    color: rgb(189, 24, 38);
+    border-color: rgb(189, 24, 38);
+}
+
+.btn-outline-danger:hover {
+    background-color: rgb(189, 24, 38);
+    border-color: rgb(189, 24, 38);
+}
+
+.btn-outline-danger:focus {
+    box-shadow: none;
+}
+
+a.btn.btn-outline-danger {
+    color: rgb(189, 24, 38);
+}
+
+a.btn.btn-outline-danger:hover {
+    color: #fff
+}
+
+.btn-info {
+    background-color: rgb(240, 128, 128);
+    border-color: rgb(240, 128, 128);
+}
+
+.btn-info:hover {
+    background-color: rgb(220, 111, 111);
+    border-color: rgb(220, 111, 111);
+}
+
+.btn-info:focus {
+    box-shadow: none;
+}
+
+.btn-dark {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    background-color: rgb(22, 55, 137);
+    border: none;
+}
+
+.btn-dark:hover {
+    background-color: rgb(16, 40, 99);
+    border: none;
+}
+
+.btn-dark:focus {
+    box-shadow: none;
+}
+
+.btn-outline-dark {
+    color: rgb(22, 55, 137);
+    border-color: rgb(22, 55, 137);
+}
+
+.btn-outline-dark:hover {
+    background-color: rgb(22, 55, 137);
+    border-color: rgb(22, 55, 137);
+}
+
+.btn-outline-dark:focus {
+    box-shadow: none;
+}
+
+.btn-rounded {
+    border-radius: 50%;
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+}
+
+.btn-secondary.btn-submit {
+    border-radius: 5rem;
+    border-color: #6d757d;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    margin-left: 0.3rem;
+}
+/* Tables */
+
+thead th {
+    white-space: nowrap;
+}
+
+tr.warning {
+    border-left: 1px solid #DB3545;
+}
+
+.table {
+    font-size: 0.9rem;
+}
+
+.table thead th {
+    color: #5f5f5f;
+    border-color: rgb(241, 241, 241);
+}
+
+.table td, .table th {
+    border-top: 0;
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #fbfbfb;
+}
+
+.table-borderless th:active, .table-borderless th:focus {
+    outline: 0;
+    border: none;
+    /*-moz-outline-style: none;*/
+}
+
+.table .btn {
+    font-size: 0.9rem;
+}
+
+/* Forms */
+
+.form-control {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #ced4da;
+    padding: 0;
+    font-size: 0.9rem;
+    -webkit-appearance: none;
+}
+
+.form-control:focus {
+    border-color: rgb(151, 151, 151);
+    box-shadow: none;
+}
+
+textarea.form-control {
+    padding: 0.7rem;
+    border-radius: 5px;
+    border: 1px solid rgb(151, 151, 151);
+    resize: none;
+    color: rgb(151, 151, 151);
+}
+
+.form-check-label {
+    color: rgba(0, 0, 0, 0.7);
+
+}
+
+.radio-check input[type='radio'] {
+    margin-right: 1rem;
+}
+
+.check-label {
+    margin-left: 1.5rem;
+}
+
+.form-check-input {
+    margin-left: 0;
+}
+
+/* Search bar */
+
+.search-container {
+    overflow: hidden;
+    font-size: 0.85rem;
+    border: 2px solid rgb(241, 241, 241);
+    border-radius: 5rem;
+    background-color: rgb(241, 241, 241);
+}
+
+.search-container input[type=text]:focus {
+    outline: 0;
+}
+
+.search-container input[type=text] {
+    width: 75%;
+    border: none;
+    background: transparent;
+    letter-spacing: 0.03rem;
+}
+
+.search-container button {
+    font-size: 1.1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.search-container button:focus {
+    outline: none;
+}
+
+.search-container button i {
+    color: #5f5f5f;
+}
+
+.custom-select {
+    height: auto;
+    font-size: 0.85rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    margin-left: 0.3rem;
+    border-radius: 5rem;
+    border: 2px solid rgb(241, 241, 241);
+    background-color: rgb(241, 241, 241);
+}
+
+.custom-select:focus {
+    border-color: transparent;
+    outline: 0;
+    box-shadow: none;
+}
+
+/* Modals */
+
+.modal-content {
+    border: 0;
+    border-radius: 5px;
+    margin-top: 6rem;
+}
+
+.modal-header {
+    padding: 1.5rem 1.5rem 1.5rem 3rem;
+    border-bottom: 0;
+    background-color: rgb(241, 241, 241);
+}
+
+.modal-body {
+    padding: 1.5rem 3rem 1.5rem 3rem;
+}
+
+.modal-footer {
+    border-top: 0;
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
+
+/* Dropdowns */
+.dropdown-item {
+    cursor: pointer;
+}
+
+.show > .btn-dark.dropdown-toggle {
+    background-color: rgb(16, 40, 99);
+    border: none;
+}
+
+.reminders {
+    font-size: 0.9rem;
+    max-height: 250px;
+    overflow-y: scroll;
+    border-left: 2px solid rgb(241, 241, 241);
+}
+
+.reminders li {
+    margin-bottom: 0.7rem;
+}
+
+/* Pagination */
+
+.page-item.active .page-link {
+    background-color: rgb(87, 137, 252);
+    border-color: rgb(87, 137, 252);
+}

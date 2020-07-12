@@ -1,0 +1,326 @@
+{% extends "layout.html" %}
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='datepicker.js') }}"></script>
+{% endblock %}
+{% block jumbotron %}
+    <div class="container">
+        <div class="row">
+            {% if request.args.get('dashboard') %}
+                <a href="{{ url_for("dashboard_panel.create_dashboard")}}" class="d-none d-sm-inline-block">
+                    <i class="fas fa-chevron-circle-left btn-back"></i>
+                </a>
+                {% elif request.args.get('dashboard_table') and 0 == request.args.get('dashboard_table')|int %}
+                <a href="{{ url_for("dashboard_panel.display_missing_table")}}" class="d-none d-sm-inline-block">
+                    <i class="fas fa-chevron-circle-left btn-back"></i>
+                </a>
+                {% elif request.args.get('dashboard_table') and 1 == request.args.get('dashboard_table')|int %}
+                <a href="{{ url_for("dashboard_panel.display_overdue_table")}}" class="d-none d-sm-inline-block">
+                    <i class="fas fa-chevron-circle-left btn-back"></i>
+                </a>
+                {% elif request.args.get('dashboard_table') and 2 == request.args.get('dashboard_table')|int %}
+                <a href="{{ url_for("dashboard_panel.display_no_upcoming_table") }}" class="d-none d-sm-inline-block">
+                    <i class="fas fa-chevron-circle-left btn-back"></i>
+                </a>
+                 {% else %}
+                <a href="{{ url_for(".viewer") }}" class="d-none d-sm-inline-block">
+                    <i class="fas fa-chevron-circle-left btn-back"></i>
+                </a>
+            {% endif %}
+            <div class="col col-md-7 col-sm-7 col-8 px-0">
+                <h1 class="mb-auto pb-3" style="display: inline">{{ patient['first_name'] }} {{ patient['last_name'] }}
+                    <span class="gray"><br>Blood Tests</span></h1>
+            </div>
+            <div class="col col-md-5 col-sm-5 col-4 text-right">
+                <button type="button" class="btn btn-primary d-none d-sm-inline-block" data-toggle="modal"
+                        data-target="#schedule_next">+ Schedule blood test
+                </button>
+                <button type="button" class="btn btn-primary btn-rounded d-sm-none" data-toggle="modal"
+                        data-target="#schedule_next">+
+                </button>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <section class="pb-2 w-100">
+                <h4 class="pb-2"><b>Upcoming</b></h4>
+                <table id="upcoming_table" class="table table-responsive">
+                    <thead>
+                    <tr>
+                        <th width="17%" style="min-width: 110px">Due Date</th>
+                        <th width="17%"></th>
+                        <th width="20%"></th>
+                        <th width="20%"></th>
+                        <th width="26%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for t in upcoming_blood_tests %}
+                        {% set due_date = t.get('due_date', '') | date_to_string %}
+                        <tr>
+                            <td colspan="2">{{ due_date }}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button"
+                                            id="dropdownMarkUpcoming"
+                                            data-toggle="dropdown" data-boundary="window" aria-haspopup="true"
+                                            aria-expanded="false">
+                                        Add Date
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMarkUpcoming">
+                                        <a class="dropdown-item"
+                                           onClick=openMarkDoneModal("{{ t['_id'] }}","{{ due_date }}");>Test Done</a>
+                                        <a class="dropdown-item"
+                                           onClick=openMarkReceivedModal("{{ t['_id'] }}","{{ due_date }}","{{ done_date }}");>
+                                            Results Received</a>
+                                    </div>
+                                </div>
+                            <td>
+                                <a href="{{ url_for('.send_notification', row_type='patient', row_id=patient['_id'],
+                            test_id=t['_id']) }}" class="btn btn-dark">Remind Patient</a>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('.get_notification_log', row_id=patient['_id'],
+                            test_id=t['_id']) }}" class="btn btn-outline-dark">Reminders Log</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <div class="row mt-5">
+            <section class="pb-2 w-100">
+                <h4 class="pb-2"><b>Completed</b></h4>
+                <table id="done_table" class="table table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th width="17%" style="min-width: 110px">Due Date</th>
+                        <th width="17%" style="min-width: 110px">Done Date</th>
+                        <th width="20%"></th>
+                        <th width="20%"></th>
+                        <th width="26%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for t in done_blood_tests %}
+                        {% set due_date = t.get('due_date') | date_to_string %}
+                        {% set done_date = t.get('done_date', '') | date_to_string %}
+                        <tr>
+                            <td>{{ due_date }}</td>
+                            <td>{{ done_date }}</td>
+                            <td>
+                                <button onClick=openMarkReceivedModal("{{ t['_id'] }}","{{ due_date }}","{{ done_date }}");
+                                        class="btn btn-primary">Results Received
+                                </button>
+                            </td>
+                            <td>
+                                <a class="btn btn-dark" href="{{ url_for('.send_notification', row_type='hospital',
+                            row_id=patient['_id'], test_id=t['_id']) }}">Remind Hospital</a>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('.get_notification_log', row_id=patient['_id'],
+                            test_id=t['_id']) }}" class="btn btn-outline-dark">Reminders Log</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <div class="row mt-5">
+            <section class="pb-2 w-100">
+                <h4 class="pb-2"><b>To Review</b></h4>
+                <table id="past_table" class="table table-hover table-responsive w-100 d-block d-sm-table">
+                    <thead>
+                    <tr>
+                        <th width="20%" style="min-width: 110px">Due Date</th>
+                        <th width="20%" style="min-width: 110px">Done Date</th>
+                        <th width="20%" style="min-width: 110px">Results</th>
+                        <th width="20%"></th>
+                        <th width="20%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for t in to_review_blood_tests %}
+                        {% set due_date = t.get('due_date', '') | date_to_string %}
+                        <tr>
+                            <td>{{ due_date }}</td>
+                            <td>{{ t.get('done_date', '')  | date_to_string }}</td>
+                            <td>{{ t.get('results_received_date') | date_to_string }}</td>
+                            <td>
+                                <a href="{{ url_for('.mark_reviewed', row_id=patient['_id'],
+                            blood_test_id=t['_id']) }}" class="btn btn-dark">Reviewed</a>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('.get_notification_log', row_id=patient['_id'],
+                            test_id=t['_id']) }}" class="btn btn-outline-dark">Reminders log</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <div class="row mt-5">
+            <section class="pb-2 w-100">
+                <h4 class="pb-2"><b>Past</b></h4>
+                <table id="past_table" class="table table-hover table-responsive w-100 d-block d-sm-table">
+                    <thead>
+                    <tr>
+                        <th width="25%" style="min-width: 110px">Due Date</th>
+                        <th width="25%" style="min-width: 110px">Done Date</th>
+                        <th width="25%" style="min-width: 110px">Results</th>
+                        <th width="25%"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for t in past_blood_tests %}
+                        {% set due_date = t.get('due_date', '') | date_to_string %}
+                        <tr>
+                            <td>{{ due_date }}</td>
+                            <td>{{ t.get('done_date', '')  | date_to_string }}</td>
+                            <td>{{ t.get('results_received_date') | date_to_string }}</td>
+                            <td>
+                                <a href="{{ url_for('.get_notification_log', row_id=patient['_id'],
+                            test_id=t['_id']) }}" class="btn btn-outline-dark">Reminders log</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal: Schedule Next Blood Test -->
+    <div class="modal fade" id="schedule_next" tabindex="-1" role="dialog" aria-labelledby="schedule_next_label"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="schedule_next_label">Schedule new blood test</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="submit_form_schedule" action="{{ url_for('.get_blood_tests', row_id=patient['_id']) }}"
+                      method="POST">
+                    <div class="modal-body">
+                        <p>
+                            <span class="gray">Patient: </span>{{ patient['first_name'] }} {{ patient['last_name'] }}
+                        </p>
+
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <label>Blood test date:</label>
+                                <input type="text" class="form-control date-picker" name="next_date" autocomplete="off"
+                                       value="{{ today_date | date_to_string }}" required/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <button type="submit" class="btn btn-primary mr-auto ml-3 mb-2">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Mark Done -->
+    <div class="modal fade" id="mark_done" tabindex="-1" role="dialog" aria-labelledby="mark_done_label"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mark_done_label">Mark blood test as done</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/" id="submit_form_done" method="POST">
+                    <div class="modal-body">
+                        <p>
+                            <span class="gray">Patient: </span>{{ patient['first_name'] }} {{ patient['last_name'] }}
+                        </p>
+                        <p>
+                            <span class="gray">Blood test due date: </span><span id="due_date_done"></span>
+                        </p>
+
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <label>Blood test done date:</label>
+                                <input type="text" class="form-control date-picker" autocomplete="off" name="done_date"
+                                       value="{{ today_date | date_to_string }}" required/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=" modal-footer">
+                        <div class="row">
+                            <button type="submit" class="btn btn-primary mr-auto ml-3 mb-2">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Mark Received -->
+    <div class="modal fade" id="mark_received" tabindex="-1" role="dialog" aria-labelledby="mark_received_label"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mark_received_label">Mark results as received</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/" id="submit_form_received" method="POST">
+                    <div class="modal-body">
+                        <p>
+                            <span class="gray">Patient: </span>{{ patient['first_name'] }} {{ patient['last_name'] }}
+                        </p>
+                        <p>
+                            <span class="gray">Blood test due date: </span><span id="due_date_received"></span>
+                        </p>
+                        <p>
+                            <span class="gray">Blood test done date: </span><span id="done_date_received"></span>
+                        </p>
+
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <label>Results received date:</label>
+                                <input type="text" class="form-control date-picker" name="received_date"
+                                       value="{{ today_date | date_to_string }}" autocomplete="off" required/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <button type="submit" class="btn btn-primary mr-auto ml-3 mb-2">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openMarkDoneModal(testId, dueDate) {
+            document.getElementById("submit_form_done").action = "{{ url_for('.mark_done', row_id=patient['_id'])}}" + testId;
+            document.getElementById("due_date_done").innerHTML = dueDate;
+            $("#mark_done").modal("show");
+        }
+
+        function openMarkReceivedModal(testId, dueDate, doneDate) {
+            document.getElementById("submit_form_received").action = "{{ url_for('.mark_received', row_id=patient['_id'])}}" + testId;
+            document.getElementById("due_date_received").innerHTML = dueDate;
+            document.getElementById("done_date_received").innerHTML = doneDate;
+            $("#mark_received").modal("show");
+        }
+    </script>
+{% endblock %}

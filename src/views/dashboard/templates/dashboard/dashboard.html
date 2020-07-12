@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    <script src="{{ url_for('static', filename='enableTooltips.js') }}" defer></script>
+
+    <div class="container dashboard px-0">
+        <div class="row pt-5">
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Number of Patients</h5>
+                        <p class="card-text patient-count">{{ patientsCount }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Completed Blood Tests</h5>
+                        <span class="completed-to-requested-week">{{ data["completed"] }} / {{ data["requested"] }} &nbsp</span>
+                        <span class="badge badge-primary">This Week</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Completed Blood Tests</h5>
+                        <span class="completed-to-requested-month">{{ data["completed_this_month"] }} / {{ data["requested_this_month"] }} &nbsp</span>
+                        <span class="badge badge-primary">This Month</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="jumbotron bg-white mx-auto mt-3 w-100 p-5">
+            <h1 class="mb-auto pb-3" style="display: inline-block"><span>Admin </span><span
+                    style="opacity: 0.3;">Dashboard</span>
+            </h1>
+
+            <div class="layer w-100 p-5">
+                <!-- Charts Section -->
+                <div>
+                    <h5 class="mB-5">Blood Tests Completed This Week</h5>
+                    <div class="pb-4">
+                        <h10 class="subtitle">Percentage of patients that have completed blood tests this week</h10>
+                        <span class="c-grey-600 fsz-sm" style="float: right;">{{ ratioTests }}%</span>
+                    </div>
+                    <div class="progress mT-10 mb-5">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0"
+                             aria-valuemax="100"
+                             style="width:{{ ratioTests }}%">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h5 class="mB-5">Patients' Age</h5>
+                    <div class="pb-4">
+                        <h10 class="subtitle">Ratio of patients younger than 12 to patients older than 12
+                        </h10>
+                    </div>
+                    <div class="progress mT-10">
+                        <div class="progress-bar less-than-twelve" role="progressbar" aria-valuemin="0"
+                             aria-valuemax="100" style="width:{{ data["less_twelve"] }}%" data-toggle="tooltip"
+                             data-placement="bottom"
+                             title="Under 12 years old">
+                        </div>
+                        <div class="progress-bar bg-warning over-twelve" role="progressbar" aria-valuemin="0"
+                             aria-valuemax="100" style="width:{{ data["over_twelve"] }}%" data-toggle="tooltip"
+                             data-placement="bottom"
+                             title="Over 12 years old">
+                        </div>
+                    </div>
+                </div>
+                <span>
+                        <p style="color: grey"><i class="fas fa-circle mt-4 mr-1" style="color: #007BFF"></i> under 12
+                        <i class="fas fa-circle ml-5 mr-1" style="color: #FFC108"></i> over 12 </p>
+                    </span>
+            </div>
+            <h3 class="pt-5 pr-5 pl-5">Overdue Blood Tests</h3>
+            <div class="pl-5">
+                <h10 class="subtitle">Last 5 patients who have overdue blood tests.</h10>
+            </div>
+            <div class="table-responsive pl-5 pt-4 pr-5">
+                <table id="overdue_patients_table" class="table table-borderless table-hover">
+                    <thead>
+                    <tr>
+                        {% for value in data["display_columns"] %}
+                            <th scope="col">{{ value.replace("_"," ").title() }}</th>
+                        {% endfor %}
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in data["patient_list_overdue"] %}
+                        <tr>
+                            {% for value in data["display_columns"] %}
+                                <td>{{ row[value] }}</td>
+                            {% endfor %}
+                            <td>
+                                <a class="btn btn-primary" href="{{ url_for('patient.get_blood_tests', row_id=row['_id']) }}">Blood
+                                    Tests</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <span class="float-right mt-3 mr-3">
+            <a href="{{ url_for('.display_overdue_table') }}" class="btn btn-outline-primary mr-5">Show All</a>
+        </span>
+            </div>
+            <h3 class="pt-5 pr-5 pl-5">Blood Tests Missing</h3>
+            <div class="pl-5">
+                <h10 class="subtitle">Last 5 patients whose blood tests weren't received.</h10>
+            </div>
+            <div class="table-responsive pl-5 pt-4 pr-5">
+                <table id="patients_table" class="table table-borderless table-hover">
+                    <thead>
+                    <tr>
+                        {% for value in data["display_columns"] %}
+                            <th scope="col">{{ value.replace("_"," ").title() }}</th>
+                        {% endfor %}
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in data["patient_list_no_results"] %}
+                        <tr>
+                            {% for value in data["display_columns"] %}
+                                <td>{{ row[value] }}</td>
+                            {% endfor %}
+                            <td>
+                                <a class="btn btn-primary" href="{{ url_for('patient.get_blood_tests', row_id=row['_id'], dashboard=True) }}">Blood
+                                    Tests</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <span class="float-right mt-3 mr-3">
+            <a href="{{ url_for('.display_missing_table') }}" class="btn btn-outline-primary mr-5">Show All</a>
+        </span>
+            </div>
+            <h3 class="pt-5 pr-5 pl-5">No Upcoming Blood Tests</h3>
+            <div class="pl-5">
+                <h10 class="subtitle">Last 5 patients with no scheduled blood tests.</h10>
+            </div>
+            <div class="table-responsive pl-5 pt-4 pr-5">
+                <table id="patients_table_no_upcoming" class="table table-borderless table-hover">
+                    <thead>
+                    <tr>
+                        {% for value in data["display_columns"] %}
+                            <th scope="col">{{ value.replace("_"," ").title() }}</th>
+                        {% endfor %}
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in data["patient_list_no_upcoming"] %}
+                        <tr>
+                            {% for value in data["display_columns"] %}
+                                <td>{{ row[value] }}</td>
+                            {% endfor %}
+                            <td>
+                                <a class="btn btn-primary" href="{{ url_for('patient.get_blood_tests', row_id=row['_id'], dashboard=True) }}">Blood
+                                    Tests</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <span class="float-right mt-3 mr-3 ">
+            <a href="{{ url_for('.display_no_upcoming_table') }}" class="btn btn-outline-primary mr-5">Show All</a>
+        </span>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

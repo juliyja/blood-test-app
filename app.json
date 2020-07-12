@@ -1,0 +1,45 @@
+{
+  "name": "iconic",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "addons": [
+    "mongolab:sandbox"
+  ],
+  "env": {
+    "MONGODB_URI": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "scripts": {
+  },
+  "stack": "heroku-18",
+  "environments": {
+    "test": {
+      "formation": {
+        "test": {
+          "quantity": 1,
+          "size": "standard-1x"
+        }
+      },
+      "scripts": {
+        "test-setup": "pip install -r requirements-test.txt",
+        "test": "pytest --tap-stream --cov=src --cov-report xml:coverage.xml tests"
+      },
+      "env": {
+        "PYTHONPATH": "src"
+      },
+      "addons": [
+        "mongolab:sandbox"
+      ]
+    }
+  }
+}

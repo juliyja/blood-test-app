@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block jumbotron %}
+
+    <h1 class="mb-auto pb-3">Test Confirmation</h1>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-6">
+                <label class="form-check-label">Did u attend this blood test?</label>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="form-group col-6">
+                <div class="form-check form-check-inline radio-check">
+                    <input class="form-check-input position-static" type="radio" name="blankRadio" id="yesRadio"
+                           value="option1">
+                    <span class="checkmark"></span>
+                    <label class="form-check-label" for="yesRadio">Yes</label>
+                </div>
+                <div class="form-check pl-4 form-check-inline radio-check">
+                    <input class="form-check-input position-static" type="radio" name="blankRadio" id="noRadio"
+                           value="option1">
+                    <label class="form-check-label" for="noRadio">No</label>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <button type="button" class="btn btn-primary mr-auto ml-3 mt-auto mb-2">Submit response</button>
+        </div>
+    </div>
+
+
+{% endblock %}

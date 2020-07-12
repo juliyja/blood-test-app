@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block css %}
+    <script src="{{ url_for('.static', filename='ckeditor.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+{% endblock %}
+{% block jumbotron %}
+
+    <h1 class="mb-4 pb-3 ">Settings</h1>
+
+    <ul class="nav nav-tabs">
+        <li class='nav-item'>
+            <a class='nav-link active' data-toggle='tab' href='#patient'>Patient</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link ' data-toggle='tab' href='#hospital'>Hospital</a>
+        </li>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class='tab-pane container fade in show active' id='patient'>
+            <form method="post" action="{{ url_for('settings.edit_message', category='patient') }}">
+                <div class="my-4">
+                    <label>Email reminder template</label>
+                    <textarea name="email_editor_patient" id="email_editor_patient">
+                                            {{ patient.get('email', '') }}
+                                        </textarea>
+                </div>
+                <div class="my-4">
+                    <label>SMS reminder template</label>
+                    <textarea name="SMS_editor_patient" id="SMS_editor_patient">
+                                                {{ patient.get('text', '') }}
+                                            </textarea>
+                </div>
+                <script>
+                    CKEDITOR.replace('email_editor_patient');
+                    CKEDITOR.replace('SMS_editor_patient');
+                </script>
+                <div class="row mt-4">
+                    <button type="submit" class="btn btn-primary mr-auto ml-3 mt-5 mb-2">Save changes</button>
+                </div>
+            </form>
+        </div>
+        <div class='tab-pane container fade' id='hospital'>
+            <form method="post" action="{{ url_for('settings.edit_message', category='hospital') }}">
+                <div class="my-4">
+                    <label>Email reminder template</label>
+                    <textarea name="email_editor_hospital" id="email_editor_hospital">
+                                                {{ hospital.get('email', '') }}
+                                            </textarea>
+                </div>
+                <div class="my-4">
+                    <label>SMS reminder template</label>
+                    <textarea name="SMS_editor_hospital" id="SMS_editor_hospital">
+                                                {{ hospital.get('text', '') }}
+                                            </textarea>
+                </div>
+                <script>
+                    CKEDITOR.replace('email_editor_hospital');
+                    CKEDITOR.replace('SMS_editor_hospital');
+                </script>
+                <div class="row mt-4">
+                    <button type="submit" class="btn btn-primary mr-auto ml-3 mt-5 mb-2">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

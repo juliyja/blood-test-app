@@ -1,0 +1,229 @@
+{% extends "layout.html" %}
+{% block jumbotron %}
+
+    <div class="container">
+        <div class="row">
+            {% if not dashboard %}
+                <div class="col col-md-8 col-sm-8 col-8 px-0">
+                    <h1 class="mb-auto pb-3" style="display: inline"><span>{{ type | capitalize }}</span> <span
+                            style="opacity: 0.3;">List</span></h1>
+                </div>
+                <div class="col col-md-4 col-sm-4 col-4 text-right">
+                    <a href="{{ url_for("%s.modify" % type) }}" class="btn btn-primary d-none d-sm-inline-block">+
+                        Add {{ type | capitalize }}</a>
+                    <a href="{{ url_for("%s.modify" % type) }}" class="btn btn-primary btn-rounded d-sm-none">+</a>
+                </div>
+            {% else %}
+                {% if dashboard_table == 0 %}
+                    <div class="col col-md-8 col-sm-8 col-8 px-0">
+                        <a href="{{ url_for("dashboard_panel.create_dashboard") }}" class="d-none d-sm-inline-block">
+                            <i class="fas fa-chevron-circle-left btn-back"></i>
+                        </a>
+                        <h3>Blood Tests Missing</h3>
+                        <h10 class="subtitle pt-5">Patients whose blood tests scheduled weren't received
+                        </h10>
+                    </div>
+                {% elif dashboard_table == 2 %}
+                    <a href="{{ url_for("dashboard_panel.create_dashboard")}}" class="d-none d-sm-inline-block">
+                        <i class="fas fa-chevron-circle-left btn-back"></i>
+                    </a>
+                    <div class="col col-md-8 col-sm-8 col-8 px-0">
+                        <h3>No Upcoming Blood Tests</h3>
+                        <h10 class="subtitle pt-5">Patients whose blood tests have not been scheduled
+                        </h10>
+                    </div>
+                {% elif dashboard_table == 1 %}
+                    <a href="{{ url_for("dashboard_panel.create_dashboard")}}" class="d-none d-sm-inline-block">
+                        <i class="fas fa-chevron-circle-left btn-back"></i>
+                    </a>
+                    <div class="col col-md-8 col-sm-8 col-8 px-0">
+                        <h3>Overdue Blood Tests</h3>
+                        <h10 class="subtitle pt-5">Patients whose blood tests are overdue
+                        </h10>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="row mt-5">
+            {% if not dashboard %}
+                <form action="{{ url_for("%s.search" % type) }}" class="form-inline w-100">
+
+            {% if type == "patient" %}
+                <div class="mt-5 mb-5 p-2 px-3 search-container w-75">
+                <i class="fa fa-search search-icon"></i>
+            {% else %}
+                <div class="mt-5 mb-5 p-2 px-3 search-container w-100">
+                <button type="submit"><i class="fa fa-search"></i></button>
+            {% endif %}
+            <input type="text" name="search" placeholder="Search {{ type }} by keyword…">
+            </div>
+            {% if type == 'patient' %}
+                <select class="custom-select mt-5 mb-5" name="age">
+                    {% for option in ["All", "Under 12", "12 and over"] %} }
+                        {% if (age == option | lower) %}
+                            <option selected>{{ option }}</option>
+                        {% else %}}
+                            <option>{{ option }}</option>
+                        {% endif %}}
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-secondary btn-submit">Go</button>
+            {% endif %}
+            </form>
+         {% endif %}
+        </div>
+        <div class="row">
+            <div class="table-responsive">
+                <table id="listTable" class="table table-hover">
+                    <thead>
+                    <tr>
+                        {% if type == 'patient' %}
+                            <th></th>
+                        {% endif %}
+                        {% for column in display_columns %}
+                            {% if not dashboard and (column == "first_name" or column == "last_name" or column == "date_of_birth"
+                        or column == "name" or column == "hospital_number" or column == 'user') %}
+                                <th scope="col">{{ column.replace("_", " ").title() }}
+                                    {% set toggle = 'desc' if order == 'asc' else 'asc' %}
+                                    <a href="{{ url_for(".viewer", field=column, order=toggle) }}">
+                                        <i class="fas fa-sort"></i></a>
+                                </th>
+                            {% else %}
+                                <th scope="col">{{ column.replace("_", " ").title() }}</th>
+                            {% endif %}
+                        {% endfor %}
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        {% if type == 'patient' %}
+                            <th scope="col"></th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in entries %}
+                        {% if (row.get('transplant')) or (row.get('is_high_risk')) %}
+                            <tr class="warning">
+                                <td><span class="badge badge-danger">R</span></td>
+                                {% elif type == 'patient' %}
+                            <tr>
+                                <td></td>
+                                {% else %}
+                            <tr>
+                        {% endif %}
+                    {% for value in display_columns %}
+                        {% if value == 'date_of_birth' %}
+                            <td>{{ row[value] | date_to_string }}</td>
+                        {% else %}
+                            <td>{{ row[value] }}</td>
+                        {% endif %}
+                    {% endfor %}
+                    {% if type == 'patient' %}
+                        <td>
+                            <a class="btn btn-primary" href="{{ url_for('%s.get_blood_tests' %type, row_id=row['_id'], dashboard_table=dashboard_table) }}">
+                                Blood Tests
+                            </a>
+                        </td>
+                    {% endif %}
+                    {% if not dashboard %}
+                        <td>
+                            <a class="btn btn-outline-primary"
+                               href="{{ url_for("%s.modify" % type, row_id=row['_id']) }}">Edit</a>
+                        </td>
+                        <td>
+                            {% if type == 'hospital' %}
+                                <a class="btn btn-outline-danger"
+                                   onClick=deleteRow("{{ row.get('hospital_number') | split_on_space }}","","{{ url_for("%s.delete" % type, row_id=row.get('_id')) }}");>Delete</a>
+                            {% else %}
+                                <a class="btn btn-outline-danger"
+                                   onClick=deleteRow("{{ row.get('first_name') | split_on_space }}","{{ row.get('last_name') | split_on_space}}","{{ url_for("%s.delete" % type, row_id=row.get('_id')) }}");>Delete</a>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% if not entries | length > 0 %}
+                    <p class="text-muted text-center">No data to display.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if not searched %}
+            <div class="row mt-5">
+                <nav class="mx-auto" aria-label="page navigation">
+                    <ul class="pagination">
+                        {% if page > 1 %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{ url_for(".viewer", page=page - 1, field=field, order=order) }}"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link"
+                                                     href="{{ url_for(".viewer", page=page - 1, field=field, order=order) }}">{{ page-1 }}</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item"><a class="page-link"
+                                                 href="{{ url_for(".viewer", page=page, field=field, order=order) }}">{{ page }}</a>
+                        </li>
+                        {% if page  < (entries | length /count)| round(0, 'ceil')| int or total_count and page  < (total_count /count)| round(0, 'ceil')| int %}
+                            <li class="page-item"><a class="page-link"
+                                                     href="{{ url_for(".viewer", page=page + 1, field=field, order=order) }}">{{ page + 1 }}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{ url_for(".viewer", page=page + 1, field=field, order=order) }}"
+                                   aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+
+        <div class="modal fade" id="delete_verification" tabindex="-1" role="dialog"
+             aria-labelledby="mark_received_label"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mark_received_label">
+                            Are you sure?
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body mt-3">
+                        <span class="dark-gray">{{ type | capitalize }} to delete: </span><span id="name-label"></span>
+                    </div>
+                    <div class="modal-footer mt-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <a class="btn btn-danger" id="delete_link"
+                                   href="/">Delete</a>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function deleteRow(rowName, rowSurnameOrNumber, url) {
+            document.getElementById("delete_link").setAttribute("href", url);
+            document.getElementById("name-label").innerHTML = rowName + " " + rowSurnameOrNumber;
+            $("#delete_verification").modal("show");
+
+        }
+    </script>
+{% endblock %}

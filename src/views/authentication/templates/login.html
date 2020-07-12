@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('.static', filename='custom.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron login bg-white mx-auto mt-5 w-50 p-8">
+
+        <div class="container">
+            <div class="row">
+                <h1 class="mb-auto pb-3">Login</h1>
+            </div>
+
+            <form action="/login" method="POST">
+                <div class="row mt-4">
+                    <label class="my-2">Email address:</label>
+                    <input type="email" class="form-control" name="email"
+                           placeholder="Email" value="{{ email }}"/>
+                </div>
+                <div class="row mt-2">
+                    <label class="my-2">Password:</label>
+                    <input type="password" class="form-control" name="password" placeholder="Password"/>
+                </div>
+                <div class="row mt-5">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
